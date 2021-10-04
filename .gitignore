@@ -3,3 +3,6 @@
 
 # VisualStudioCode
 .vscode/*
+
+# object file
+*.o
