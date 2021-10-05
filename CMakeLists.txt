@@ -29,11 +29,8 @@ if(UNIX AND ${CMAKE_SYSTEM} MATCHES Linux)
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
 
-  # ALSA
-  find_package(ALSA REQUIRED)
-
-  # pthread와 ALSA가 없는 경우
-  if(NOT Threads_FOUND OR NOT ALSA_FOUND)
+  # pthread가 없는 경우
+  if(NOT Threads_FOUND)
     message(FATAL_ERROR "Can't find the essential libraries. Please install them.")
   endif()
 elseif(${CMAKE_SYSTEM} MATCHES Darwin) # Darwin = Macos
@@ -221,3 +218,11 @@ target_link_libraries(
   PRIVATE
   ${CPP_MD5CHECKER_LIB}
 )
+
+if(${CMAKE_SYSTEM} MATCHES Linux)
+  target_link_libraries(
+    ${APP_MD5CHECKER_EXE}
+    PRIVATE
+    Threads::Threads
+  )
+endif()

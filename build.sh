@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PROJ_C_COMPILER=/usr/bin/clang
-PROJ_CPP_COMPILER=/usr/bin/clang++
+PROJ_C_COMPILER=/usr/bin/gcc
+PROJ_CPP_COMPILER=/usr/bin/g++
 PROJ_GENERATOR_NAME="Unix Makefiles"
 
 ARRAY_BUILD_TYPE=("Debug" "Release")

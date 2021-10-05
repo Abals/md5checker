@@ -86,9 +86,8 @@ struct md5checker::Impl {
   void ExplorDirectory(string path = "") {
     fs::path p;
 
-    if (path.empty()) {
+    if (path.empty())
       p = this->filepath;
-    }
     else
       p = path;
 
@@ -149,7 +148,7 @@ void md5checker::StartCheck() {
 
   if (!impl_->filepath.empty()) {
     printf("\t[[[ MD5 Checker ]]]\n ");
-    printf("\tIf you want to stop working, type (q) and press enter... \n");
+    printf("\tIf you want to stop working, type (q) and press enter... \n\33[s");
 
     thread press(md5checker::Impl::KeyInterrupt, impl_.get());
     press.detach();
