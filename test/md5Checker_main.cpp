@@ -21,11 +21,11 @@ int main(int argc, char *argv[]) {
     }
     catch (invalid_argument& e) {
       printf("%s\n", e.what());
-      printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]");
+      printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]\n");
     }
   }
   else {
-    printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]");
+    printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]\n");
   }
 
   return 0;

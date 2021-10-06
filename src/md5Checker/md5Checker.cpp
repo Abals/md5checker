@@ -28,14 +28,12 @@ namespace cbm {
 
 struct md5checker::Impl {
   string filepath;
-  uint64_t number_of_files;
   bool interrupt;
   termios current;
   termios old;
   map<string, vector<string>> md5_saver;
-  map<string, vector<string>> md5_duplicator;
 
-  Impl() : number_of_files(0), interrupt(false) {
+  Impl() : interrupt(false) {
     filepath.clear();
     tcgetattr(0, &old);
     current = old;
@@ -94,9 +92,10 @@ struct md5checker::Impl {
     fs::directory_iterator start(p);
     fs::directory_iterator end;
 
-    for (fs::directory_iterator itr = start ; itr != end ; itr++) {
+    int count = 0;
+    for (fs::directory_iterator itr = start ; itr != end ; itr++, count++) {
       if (itr->is_directory())
-        ExplorDirectory(itr->path());  
+        ExplorDirectory(itr->path());
       else if(itr->is_regular_file())
         GetMD5(itr->path());
 
