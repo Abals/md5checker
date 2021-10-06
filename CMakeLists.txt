@@ -25,6 +25,8 @@ endif()
 
 # 운영체제별 라이브러리 검색(혹은 로그출력)
 if(UNIX AND ${CMAKE_SYSTEM} MATCHES Linux)
+  set(PROJ_TARGET_PLATFORM "Linux")
+
   # pthread
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
@@ -39,7 +41,6 @@ elseif(${CMAKE_SYSTEM} MATCHES Darwin) # Darwin = Macos
   elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(PROJ_TARGET_PLATFORM "Mac")
   endif()
-  message(STATUS "This is MacOS")
 endif()
 
 # C++ 플래그 설정 (C++17)
