@@ -1,7 +1,7 @@
 
 /*!
- * \file      md5Checker.h
- * \brief     md5Checker class
+ * \file      md5Checker.cpp
+ * \brief     md5Checker implement
  * \copyright Copyright 2021. All Rights Reserved.
  */
 

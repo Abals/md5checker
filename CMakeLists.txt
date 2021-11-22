@@ -55,9 +55,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ###############################################################################
 ## Project C++ Libraries
 set(CPP_MD5CHECKER_LIB             "libmd5Checker")
+set(CPP_MD5REMOVER_LIB             "libmd5Remover")
 
 ## Test Applications
 set(APP_MD5CHECKER_EXE             "md5checker")
+set(APP_MD5REMOVER_EXE             "md5remover")
 
 ## 파일 출력 경로 확인
 set(PROJ_OUTPUT_DIRECTORY ${PROJ_TARGET_PLATFORM}/${CMAKE_BUILD_TYPE})
@@ -72,9 +74,17 @@ set(CPP_MD5CHECKER_SRC
   src/md5Checker/md5Checker.cpp
 )
 
+set(CPP_MD5REMOVER_SRC
+  src/md5Remover/md5Remover.cpp
+)
+
 ## Project Applications
 set(APP_MD5CHECKER_SRC
   test/md5Checker_main.cpp
+)
+
+set(APP_MD5REMOVER_SRC
+  test/md5Remover_main.cpp
 )
 
 
@@ -83,6 +93,7 @@ set(APP_MD5CHECKER_SRC
 ###############################################################################
 include_directories(
   inc/md5Checker
+  inc/md5Remover
 )
 
 
@@ -158,6 +169,11 @@ add_library(
   ${CPP_MD5CHECKER_SRC}
 )
 
+add_library(
+  ${CPP_MD5REMOVER_LIB}
+  STATIC
+  ${CPP_MD5REMOVER_SRC}
+)
 
 ###############################################################################
 # 실행 바이너리 소스 파일들을 실행 바이너리로 추가
@@ -165,6 +181,11 @@ add_library(
 add_executable(
   ${APP_MD5CHECKER_EXE}
   ${APP_MD5CHECKER_SRC}
+)
+
+add_executable(
+  ${APP_MD5REMOVER_EXE}
+  ${APP_MD5REMOVER_SRC}
 )
 
 
@@ -188,6 +209,11 @@ target_include_directories(
   inc/md5Checker
 )
 
+target_include_directories(
+  ${APP_MD5REMOVER_EXE}
+  PRIVATE
+  inc/md5Remover
+)
 
 ###############################################################################
 # Target 전처리기 매크로 정의 (-D)
@@ -218,6 +244,12 @@ target_link_libraries(
   ${APP_MD5CHECKER_EXE}
   PRIVATE
   ${CPP_MD5CHECKER_LIB}
+)
+
+target_link_libraries(
+  ${APP_MD5REMOVER_EXE}
+  PRIVATE
+  ${CPP_MD5REMOVER_LIB}
 )
 
 if(${CMAKE_SYSTEM} MATCHES Linux)
