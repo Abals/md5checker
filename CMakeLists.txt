@@ -258,4 +258,10 @@ if(${CMAKE_SYSTEM} MATCHES Linux)
     PRIVATE
     Threads::Threads
   )
+
+  target_link_libraries(
+    ${APP_MD5REMOVER_EXE}
+    PRIVATE
+    Threads::Threads
+  )
 endif()
