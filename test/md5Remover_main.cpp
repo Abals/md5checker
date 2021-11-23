@@ -5,6 +5,10 @@
  * \copyright Copyright 2021. All Rights Reserved.
  */
 
+// C++ Header
+#include <stdexcept>
+
+// User Header
 #include "md5Remover.h"
 
 using namespace std;

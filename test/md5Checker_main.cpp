@@ -5,6 +5,10 @@
  * \copyright Copyright 2021. All Rights Reserved.
  */
 
+// C++ Header
+#include <stdexcept>
+
+// User Header
 #include "md5Checker.h"
 
 void printUsage(void) {
@@ -48,7 +52,7 @@ int main(int argc, char *argv[]) {
 
       checker.DeleteDuplicateFiles(deleteFlag);
 
-      printf("\tFINISH MD5 CHECKER!!!\n");
+      printf("\n\n\tFINISH MD5 CHECKER!!!\n");
     }
     catch (invalid_argument& e) {
       printf("%s\n", e.what());

@@ -7,7 +7,6 @@
 
 // C header
 #include <stdint.h>
-#include <signal.h>
 #include <termios.h>
 
 // C++ header
@@ -63,7 +62,7 @@ struct md5checker::Impl {
     header.append(" | awk '{print $4}'"); // for MAC
     #endif
 
-    printf("\33[u\n\33[K\r\tProcess.... %s\n", filepath.c_str());
+    printf("\33[u\n\33[J\r\tProcess.... %s\n", filepath.c_str());
 
     FILE *stream = popen(header.c_str(), "r");
 
@@ -114,7 +113,6 @@ struct md5checker::Impl {
 
       if (input == 'q' || input == 'Q') {
         self->interrupt = true;
-        signal(SIGINT, SIG_DFL);
         break;
       }
     } while(1);
@@ -172,12 +170,11 @@ void md5checker::SaveResult(const string& path) {
     if (fp == NULL)
       throw invalid_argument("ERROR: The path to save is invalid");
     else {
-      printf("\n\n");
       char spin[] = {'-', '/', '|', '\\'};
 
       uint64_t count = 1;
       for (auto itr = impl_->md5_saver.begin(); itr != impl_->md5_saver.end() ; itr++) {
-        printf("\33[u\n\33[K\r\tPlease wait for saving.... %c", spin[count%4]);
+        printf("\33[u\n\33[J\r\tPlease wait for saving.... %c", spin[count%4]);
 
         if (itr->second.size() > 1) {
           fprintf(fp, "%llu. [%s]\n", count++, itr->first.c_str());
@@ -196,18 +193,33 @@ void md5checker::SaveResult(const string& path) {
 
 void md5checker::DeleteDuplicateFiles(bool execute) {
   if (execute) {
-    string temp = impl_->resultpath;
-    temp.append("_remove");
-    FILE *fp = fopen(temp.c_str(), "wb");
+    char spin[] = {'-', '/', '|', '\\'};
+    string removeresult = impl_->resultpath;
+    removeresult.append("_remove");
+    FILE *fp_r = fopen(removeresult.c_str(), "wb");
+    removeresult.append("_command");
+    FILE *fp_rc = fopen(removeresult.c_str(), "wb");
 
     for (auto itr = impl_->md5_saver.begin(); itr != impl_->md5_saver.end() ; itr++) {
       if ((!itr->first.empty()) && (itr->second.size() > 1)) {
         auto seconditr  = itr->second.begin();
 
-        for (seconditr++ ; seconditr != itr->second.end() ; seconditr++)
-          fprintf(fp, "%s\n", seconditr->c_str());
+        uint64_t spincnt = 0;
+        for (seconditr++ ; seconditr != itr->second.end() ; seconditr++) {
+          printf("\33[u\n\33[J\r\tPlease wait for removing.... %c", spin[spincnt++%4]);
+          string header = "rm -rf ";
+          
+          header.append("\"");
+          header.append(seconditr->c_str());
+          header.append("\"");
+          fprintf(fp_r, "%s\n", seconditr->c_str());
+          fprintf(fp_rc, "%s\n", header.c_str());
+        }
       }
     }
+
+    fclose(fp_r);
+    fclose(fp_rc);
   }
 }
 
