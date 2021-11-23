@@ -7,26 +7,56 @@
 
 #include "md5Checker.h"
 
+void printUsage(void) {
+  printf("USAGE: md5checker [--option] [root directory path to compare md5] [result file path to save]\n");
+  printf("\t Option List\n\n");
+  printf("\t --delete, -d\t\t Delete duplicate files after md5 check\n");
+}
+
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  if (argc == 3) {
-    try {
-      cbm::md5checker checker(argv[1]);
+  bool deleteFlag = false;
+  cbm::md5checker checker;
 
-      checker.StartCheck();
-      checker.SaveResult(argv[2]);
+  if (argc > 1) {
+    try {
+      for (int idx = 1 ; idx < argc ; idx++) {
+        switch (argv[idx][0]) {
+        case '-':
+          if (argv[idx][1] == '-') {
+            if (argv[idx][2] == 'd')
+              deleteFlag = true;
+          }
+          else if (argv[idx][1] == 'd')
+            deleteFlag = true;
+
+          break;
+        case '/':
+          checker.SetPath(argv[idx]);
+
+          checker.StartCheck();
+          checker.SaveResult(argv[idx+1]);
+          idx++;
+
+          break;
+        default:
+          printUsage();
+          break;
+        }
+      }
+
+      checker.DeleteDuplicateFiles(deleteFlag);
 
       printf("\tFINISH MD5 CHECKER!!!\n");
     }
     catch (invalid_argument& e) {
       printf("%s\n", e.what());
-      printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]\n");
+      printUsage();
     }
   }
-  else {
-    printf("USAGE: md5checker [root directory path to compare md5] [result file path to save]\n");
-  }
+  else
+    printUsage();
 
   return 0;
 }

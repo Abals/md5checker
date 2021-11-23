@@ -129,11 +129,8 @@ struct md5remover::Impl {
         long begin = 0, end = 0;
 
         do {
-          bool btemp = isMD5(temp, md5);
-          printf("%d\n", btemp);
-          if (isMD5(temp, md5) == true) {
+          if (isMD5(temp, md5))
             fgets(temp, sizeof(temp)/sizeof(char), fp); // Just passing
-          }
           else {
             //if (equalMD5(temp, md5) == 0) {
               printf("%s", temp);

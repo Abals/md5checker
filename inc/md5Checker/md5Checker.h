@@ -24,10 +24,9 @@ public:
   ~md5checker();
 
   void SetPath(const string& path);
-
   void StartCheck();
-
   void SaveResult(const string& path);
+  void DeleteDuplicateFiles(bool);
 
 private:
   struct Impl;

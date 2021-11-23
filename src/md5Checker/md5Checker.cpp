@@ -7,6 +7,7 @@
 
 // C header
 #include <stdint.h>
+#include <signal.h>
 #include <termios.h>
 
 // C++ header
@@ -27,14 +28,15 @@ namespace fs = std::filesystem;
 namespace cbm {
 
 struct md5checker::Impl {
-  string filepath;
+  string rootpath;
+  string resultpath;
   bool interrupt;
   termios current;
   termios old;
   map<string, vector<string>> md5_saver;
 
   Impl() : interrupt(false) {
-    filepath.clear();
+    rootpath.clear();
     tcgetattr(0, &old);
     current = old;
     current.c_lflag |= ICANON;
@@ -85,7 +87,7 @@ struct md5checker::Impl {
     fs::path p;
 
     if (path.empty())
-      p = this->filepath;
+      p = this->rootpath;
     else
       p = path;
 
@@ -112,6 +114,7 @@ struct md5checker::Impl {
 
       if (input == 'q' || input == 'Q') {
         self->interrupt = true;
+        signal(SIGINT, SIG_DFL);
         break;
       }
     } while(1);
@@ -125,12 +128,12 @@ md5checker::md5checker(const string& path) : impl_(new md5checker::Impl()) {
     if (path[0] == '.')
       throw invalid_argument("SYNTAX ERROR: Wrong input path format. Please type full path");
 
-    impl_->filepath = path;
+    impl_->rootpath = path;
   }
 }
 
 md5checker::~md5checker() {
-  impl_->filepath.clear();
+  impl_->rootpath.clear();
 }
 
 void md5checker::SetPath(const string& path) {
@@ -138,14 +141,14 @@ void md5checker::SetPath(const string& path) {
     if (path[0] == '.')
       throw invalid_argument("SYNTAX ERROR: Wrong input path format. Please type full path");
 
-    impl_->filepath = path;
+    impl_->rootpath = path;
   }
 }
 
 void md5checker::StartCheck() {
   system("clear");
 
-  if (!impl_->filepath.empty()) {
+  if (!impl_->rootpath.empty()) {
     printf("\t[[[ MD5 Checker ]]]\n ");
     printf("\tIf you want to stop working, type (q) and press enter... \n\33[s");
 
@@ -163,6 +166,7 @@ void md5checker::SaveResult(const string& path) {
   if (path.empty())
     throw invalid_argument("ERROR: The path to save is invalid");
   else {
+    impl_->resultpath = path;
     FILE *fp = fopen(path.c_str(), "wt");
 
     if (fp == NULL)
@@ -187,6 +191,23 @@ void md5checker::SaveResult(const string& path) {
     }
 
     fclose(fp);
+  }
+}
+
+void md5checker::DeleteDuplicateFiles(bool execute) {
+  if (execute) {
+    string temp = impl_->resultpath;
+    temp.append("_remove");
+    FILE *fp = fopen(temp.c_str(), "wb");
+
+    for (auto itr = impl_->md5_saver.begin(); itr != impl_->md5_saver.end() ; itr++) {
+      if ((!itr->first.empty()) && (itr->second.size() > 1)) {
+        auto seconditr  = itr->second.begin();
+
+        for (seconditr++ ; seconditr != itr->second.end() ; seconditr++)
+          fprintf(fp, "%s\n", seconditr->c_str());
+      }
+    }
   }
 }
 
