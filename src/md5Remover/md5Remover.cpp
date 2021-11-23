@@ -10,6 +10,7 @@
 #include <termios.h>
 
 // C++ header
+#include <cstring>
 #include <filesystem>
 #include <iostream>
 #include <stdexcept>
